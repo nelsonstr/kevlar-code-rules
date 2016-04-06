@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<macker>
+    <ruleset name="Coding conventions">
+        <var name="base" value="org.github.nelsonstr" />
+
+        <pattern name="api">
+            <!-- "api" includes public/protected interfaces from this project -->
+            <include filter="primary-class">
+                <include filter="interface">
+                    <include filter="class-access" min="protected" />
+                </include>
+            </include>
+        </pattern>
+
+        <pattern name="api-impl">
+            <include filter="subtype-of" pattern="api">
+                <exclude pattern="api" />
+            </include>
+        </pattern>
+
+        <pattern name="util">
+            <include filter="primary-class">
+                <exclude pattern="api" />
+                <exclude pattern="api-impl" />
+            </include>
+        </pattern>
+
+        <pattern name="collections-iface">
+            <include filter="interface">
+                <include filter="subtype-of" class="java.util.Collection" />
+                <include filter="subtype-of" class="java.util.Map" />
+            </include>
+        </pattern>
+
+        <pattern name="collections-impl">
+            <include filter="subtype-of" pattern="collections-iface">
+                <exclude filter="interface" />
+            </include>
+        </pattern>
+
+        <access-rule>
+            <message>APIs may not reference API implementations</message>
+            <deny>
+                <from pattern="api" />
+                <to pattern="api-impl" />
+            </deny>
+        </access-rule>
+
+        <access-rule severity="warning">
+            <message>API ${from} should use a collections interface instead of ${to}</message>
+            <deny>
+                <from pattern="api" />
+                <to pattern="collections-impl" />
+            </deny>
+        </access-rule>
+
+        <access-rule>
+            <message>${from} may not reference ${to}, which is another impl, unless it extends it</message>
+            <deny>
+                <from pattern="api-impl" />
+                <to pattern="api-impl" />
+                <allow>
+                    <from filter="subtype-of" pattern="to" />
+                </allow>
+            </deny>
+        </access-rule>
+
+        <access-rule>
+            <message>Util class ${from} may not reference API impl ${to}</message>
+            <deny>
+                <from pattern="util" />
+                <to pattern="api-impl" />
+            </deny>
+        </access-rule>
+
+    </ruleset>
+</macker>

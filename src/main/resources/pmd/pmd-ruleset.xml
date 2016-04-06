@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<ruleset name="nelsonstr"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 ruleset_2_0_0.xsd">
+    <!-- http://pmd.sourceforge.net/pmd-5.1.0/howtomakearuleset.html -->
+    <description>Rulessets used for netlsonstr projects.</description>
+
+    <exclude-pattern>.*/target/.*</exclude-pattern>
+
+
+    <!-- Basic -->
+    <!-- http://pmd.sourceforge.net/rules/basic.html  -->
+    <rule ref="rulesets/xml/basic.xml"/>
+
+
+    <rule ref="rulesets/java/empty.xml" />
+    <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="true" />
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/java/unnecessary.xml" >
+        <exclude name="UselessParentheses"/>
+    </rule>
+
+    <!-- Braces -->
+    <!-- http://pmd.sourceforge.net/rules/braces.html -->
+    <rule ref="rulesets/java/braces.xml"/>
+
+    <!-- Code Size -->
+    <!-- http://pmd.sourceforge.net/rules/codesize.html -->
+    <rule ref="rulesets/java/codesize.xml">
+        <exclude name="NPathComplexity"/>
+        <exclude name="TooManyMethods"/>
+    </rule>
+    <!--
+      This goes with Robert Martin's rule (Clean Code p.34). Unfortunately
+      this rule also counts comments and empty lines. So we rely on the
+      checkstyle rule and rules checking for NCSS.
+    -->
+
+    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="100" />
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
+        <properties>
+            <!--
+              Robert Martin prefers 0-, 1-, 2- and at maximum 3-argument methods.
+              We are a bit less restrictive and allow 5 arguments.
+            -->
+            <property name="minimum" value="8" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessiveClassLength">
+        <properties>
+            <property name="minimum" value="1000" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">
+      <properties>
+        <property name="reportLevel" value="10" />
+      </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount" />
+    <rule ref="rulesets/java/codesize.xml/TooManyFields" />
+    <rule ref="rulesets/java/codesize.xml/NcssMethodCount">
+        <!-- Identical to codesize.xml/ExcessiveMethodLength. -->
+        <properties>
+            <property name="minimum" value="100" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/NcssTypeCount">
+        <!-- codesize.xml/ExcessiveClassLength includes comments. -->
+        <properties>
+            <property name="minimum" value="1000" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/NcssConstructorCount">
+        <!-- Identical to codesize.xml/NcssMethodCount. -->
+        <properties>
+            <property name="minimum" value="40" />
+        </properties>
+    </rule>
+    <!--rule ref="rulesets/java/codesize.xml/TooManyMethods" /-->
+
+
+    <!-- Clone implementation -->
+    <!-- http://pmd.sourceforge.net/rules/clone.html -->
+    <rule ref="rulesets/java/clone.xml" />
+
+    <!-- Controversial -->
+    <!-- http://pmd.sourceforge.net/rules/controversial.html -->
+    <!--
+      We allow the default constructor to be explicitly stated. This makes
+      it less problematic for extensions where constructors are added and
+      break subclasses that rely on a constructor with no arguments to be
+      present.
+    -->
+    <rule ref="rulesets/java/controversial.xml">
+        <exclude name="UseObjectForClearerAPI"/>
+        <exclude name="UseConcurrentHashMap"/>
+        <exclude name="AvoidLiteralsInIfCondition"/>
+        <exclude name="UnnecessaryConstructor"/>
+        <!--
+          We encourage the setting to 'null' as a means to indicate garbage
+          collection. Furthermore we often set references to 'null' in the tear
+          down of unit tests.
+        -->
+        <exclude name="NullAssignment"/>
+        <!--
+          Although having only one return may make the code clearer, but there
+          are times where breaking this rule really makes sense. Therefore we
+          regard one return statement as a guideline and not a hard rule to be
+          checked.
+        -->
+        <exclude name="OnlyOneReturn"/>
+        <!-- Classes are allowed to use the default constructor.-->
+        <exclude name="AtLeastOneConstructor"/>
+
+        <!--
+          We do not require to place a call to the super constructor that is
+          implicit.
+        -->
+        <exclude name="CallSuperInConstructor" />
+        <!-- We allow any parenthesis to make the code clearer. -->
+        <exclude name="UnnecessaryParentheses" />
+
+
+        <!-- It is sometimes intended to have a class or method invisble outside the
+        package to keep the API clean.-->
+        <exclude name="DefaultPackage" />
+
+        <!--
+          We do not think that the performance gain is a good trade of for the
+          readability of the code.
+        -->
+        <exclude name="BooleanInversion" />
+
+        <!-- We see no gain in this rule.-->
+        <exclude name="DataflowAnomalyAnalysis" />
+
+        <!-- Local variables should always be declared final.-->
+        <exclude name="AvoidFinalLocalVariable" />
+
+        <!-- We consider using volatile necessary. -->
+        <exclude name="AvoidUsingVolatile" />
+
+        <!--
+          We consider using native code as a tool to be considered carefully,
+          yet to be considered.
+        -->
+        <exclude name="AvoidUsingNativeCode" />
+
+        <!--
+          In code using reflection this may be necessary and therefore we do not
+          want to have a strict rule for this. Nonetheless we think that
+          reflection should be avoided where other means yield the same result.
+        -->
+        <exclude name="AvoidAccessibilityAlteration" />
+        <!--
+          We see the call for garbage collection as a hint and trust the
+          programmer to know what s/he does.
+        -->
+        <exclude name="DoNotCallGarbageCollectionExplicitly"/>
+
+    </rule>
+
+    <!-- Coupling -->
+    <!-- http://pmd.sourceforge.net/rules/coupling.html -->
+    <rule ref="rulesets/java/coupling.xml" >
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
+    </rule>
+
+    <rule ref="rulesets/java/coupling.xml/ExcessiveImports">
+        <properties>
+            <!--
+              We do not see the number of imports to problematic. Still we want to
+              get hinted to a possible problem.
+            -->
+            <property name="minimum" value="50" />
+        </properties>
+    </rule>
+
+    <!-- Design -->
+    <!-- http://pmd.sourceforge.net/rules/design.html -->
+    <rule ref="rulesets/java/design.xml" >
+        <exclude name="GodClass"/>
+        <exclude name="AvoidReassigningParameters"/>
+        <!-- Our builder pattern demands this to be commented out.-->
+        <exclude name="AccessorClassGeneration"/>
+
+        <!-- We do not bother with the ternary operator. -->
+        <exclude name="ConfusingTernary" />
+        <exclude name="ImmutableField" />
+        <!-- A class that has private constructors and does not have any static
+        methods or fields usually uses the builder pattern. Therefore we skip
+        this checker.-->
+        <exclude name="MissingStaticMethodInNonInstantiatableClass" />
+        <!-- If you know what you are doing, notify will be enough. -->
+        <exclude name="UseNotifyAllInsteadOfNotify" />
+
+        <!--
+          We think that declaring a class as abstract is a design decision not
+          an implementation aspect. So it is reasonable to declare classes
+          abstract even if they do not provide abstract methods. In addition to
+          that abstract classes may provide default implementation for protected
+          methods that may or may not be overridden by subclasses.
+        -->
+        <exclude name="AbstractClassWithoutAbstractMethod" />
+        <!--
+          It may be more verbose to give the value to be returned a name. We
+          expect the compiler to make any optimaizations that may be applied.
+          Therfore we allow setting a local variable to a value to be returned.
+        -->
+        <exclude name="UnnecessaryLocalBeforeReturn"/>
+        <!-- Empty methods may provide a no-op implementation that can be
+        overridden by subclasses. It is annoying to repeat the comments from
+        the Javadoc to the body.-->
+        <exclude name="UncommentedEmptyMethod" />
+
+        <!--
+          The empty constructor is often the default constructor that is
+          specified to state that the default constructor is supported.
+          Therefore there is no need to document that. It would only make sense
+          if we forbid stating the default constructor, but we want to make it
+          explicit.
+        -->
+        <exclude name="UncommentedEmptyConstructor" />
+        <exclude name="UnsynchronizedStaticDateFormatter" />
+        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal" />
+        <!--
+          We think that an empty method may be a proper default behaviour for an
+          abstract class.
+        -->
+        <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
+
+        <!--
+          It is the responsibility of the programmer to know what is more
+          readable in a particular case: if or switch.
+        -->
+        <exclude name="TooFewBranchesForASwitchStatement" />
+
+    </rule>
+    <rule ref="rulesets/java/design.xml/CloseResource">
+        <properties>
+            <property name="types" value="java.sql.Connection,java.sql.Statement,java.sql.ResultSet" />
+        </properties>
+    </rule>
+
+    <!--  Unfortunately the rule finds also non-sql classes.
+         Statements are not all closeable, so we make it explicit, but
+         unfortunately the rule only matches the declared type without a real
+         resolution. Effectively this rule will not find statements, etc., if
+         imports are used.
+          http://pmd.sourceforge.net/rules/design.html#CloseResource
+          http://tasks.smartics.de/show_bug.cgi?id=490
+    -->
+
+
+    <!-- Finalizer -->
+    <!-- http://pmd.sourceforge.net/rules/finalizers.html -->
+    <rule ref="rulesets/java/finalizers.xml" />
+
+    <!-- Import Statement -->
+    <!-- http://pmd.sourceforge.net/rules/imports.html -->
+    <rule ref="rulesets/java/imports.xml" >
+        <!--
+          This is a general rule. Either state each import (static or not)
+          explicitly or use the asterisk (*). We currently decide to make each
+          import explicit. We do not bother with imports since the are hidden in
+          the IDE editor and if we examine a class outside the IDE (e.g. in a
+          Source-Zip), we are happy to have the explicit reference. Even more if
+          the referenced class got lost in a new version of a library.
+        -->
+        <exclude name="TooManyStaticImports" />
+    </rule>
+
+    <!-- JEE -->
+    <!-- http://pmd.sourceforge.net/rules/j2ee.html -->
+    <rule ref="rulesets/java/j2ee.xml" />
+
+    <!-- JavaBean -->
+    <!-- http://pmd.sourceforge.net/rules/javabeans.html -->
+
+    <rule ref="rulesets/java/javabeans.xml" >
+        <!--
+        Do not know the benefit of this rule. Not every class is a bean and
+        therefore has the right to have some internal state that is not
+        exposed but is not transient or static. Maybe we are missing something
+        here?-->
+        <exclude name="BeanMembersShouldSerialize" />
+    </rule>
+
+
+    <!-- JUnit -->
+    <!-- http://pmd.sourceforge.net/rules/junit.html -->
+    <rule ref="rulesets/java/junit.xml">
+        <!-- Often messages do not add any value to the understanding.-->
+        <exclude name="JUnitAssertionsShouldIncludeMessage" />
+        <!-- JUnit Rule annotations do not require assertions.-->
+        <exclude name="JUnitTestsShouldIncludeAssert" />
+        <!-- Seems not to be designed for JUnit 4. None of our test methods should start
+        with "test".-->
+        <exclude name="TestClassWithoutTestCases" />
+    </rule>
+
+    <!-- Java Logging -->
+    <!-- http://pmd.sourceforge.net/rules/logging-java.html -->
+    <rule ref="rulesets/java/logging-java.xml" >
+        <exclude name="GuardLogStatementJavaUtil"/>
+    </rule>
+
+    <!-- Jakarta Commons Logging -->
+    <!-- http://pmd.sourceforge.net/rules/logging-jakarta-commons.html -->
+    <rule ref="rulesets/java/logging-jakarta-commons.xml/UseCorrectExceptionLogging" />
+    <!--
+      Since a static logger is not a good idea for libraries (see
+      http://wiki.apache.org/jakarta-commons/Logging/StaticLog), we cannot
+      enforce this rule.
+    -->
+    <!--
+      <rule ref="rulesets/java/logging-jakarta-commons.xml/ProperLogger">
+      <properties> <property name="staticLoggerName" value="LOG" />
+      </properties> </rule>
+    -->
+
+
+    <!-- Migration Rules -->
+    <!-- http://pmd.sourceforge.net/rules/migrating.html -->
+    <rule ref="rulesets/java/migrating.xml" />
+
+
+    <!-- Naming -->
+    <!-- http://pmd.sourceforge.net/rules/naming.html -->
+
+    <rule ref="rulesets/java/naming.xml" >
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
+        <exclude name="ShortMethodName"/>
+        <exclude name="LongVariable"/>
+        <exclude name="ShortVariable"/>
+    </rule>
+
+
+
+
+    <!-- Optimization -->
+    <!-- http://pmd.sourceforge.net/rules/optimizations.html -->
+
+    <rule ref="rulesets/java/optimizations.xml" >
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    </rule>
+
+    <!-- Strict Exception -->
+    <!-- http://pmd.sourceforge.net/rules/strictexception.html -->
+    <rule ref="rulesets/java/strictexception.xml">
+        <exclude name="SignatureDeclareThrowsException"/>
+        <exclude name="AvoidCatchingGenericException"/>
+    </rule>
+
+    <!-- String and StringBuffer -->
+    <!-- http://pmd.sourceforge.net/rules/strings.html -->
+    <rule ref="rulesets/java/strings.xml" >
+        <exclude name="AvoidDuplicateLiterals" />
+    </rule>
+    <!--rule ref="rulesets/java/strings.xml/AvoidDuplicateLiterals">
+      <properties>
+        <property name="maxDuplicateLiterals" value="3" />
+		<property name="skipAnnotations" value="true" />
+      </properties>
+    </rule-->
+
+    <!-- Security Code -->
+    <!-- http://pmd.sourceforge.net/rules/sunsecure.html -->
+    <rule ref="rulesets/java/sunsecure.xml" />
+    <!--rule ref="rulesets/java/sunsecure.xml/ArrayIsStoredDirectly" /-->
+
+
+    <!-- Unused Code -->
+    <!-- http://pmd.sourceforge.net/rules/unusedcode.html -->
+    <rule ref="rulesets/java/unusedcode.xml" />
+
+    <rule ref="rulesets/java/comments.xml">
+        <exclude name="CommentContent"/>
+        <exclude name="CommentRequired"/>
+    </rule>
+
+    <rule ref="rulesets/java/comments.xml/CommentSize">
+        <properties>
+            <property name="maxLineLength" value="152"/>
+            <property name="maxLines" value="20"/>
+        </properties>
+    </rule>
+</ruleset>

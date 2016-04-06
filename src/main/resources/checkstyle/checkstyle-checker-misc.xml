@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+
+
+
+
+<!--
+    This configuration file was written by the eclipse-cs plugin configuration editor
+-->
+
+<module name="Checker">
+    <property name="severity" value="warning"/>
+   
+
+    <!-- Checks for Headers                                -->
+    <!-- See http://checkstyle.sf.net/config_header.html   -->
+    <!-- <module name="Header"> -->
+    <!--   <property name="headerFile" value="${checkstyle.header.file}"/> -->
+    <!--   <property name="fileExtensions" value="java"/> -->
+    <!-- </module> -->
+
+    <!-- TreeWalker module checks -->
+    <module name="TreeWalker">
+
+      
+
+        <!-- Checks for Javadoc comments.                     -->
+        <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+
+        <!--module name="JavadocMethod">
+          <property name="severity" value="error"/>
+          <property name="allowUndeclaredRTE" value="true"/>
+          <property name="allowMissingPropertyJavadoc" value="true"/>
+        </module>
+        <module name="JavadocType">
+          <property name="severity" value="error"/>
+          <property name="scope" value="public"/>
+          <property name="authorFormat" value="\w+"/>
+          <property name="allowMissingParamTags" value="true" />
+        </module>
+        <module name="JavadocVariable">
+          <property name="severity" value="error"/>
+          <property name="scope" value="protected" />
+        </module>
+        <module name="JavadocStyle">
+          <property name="severity" value="error"/>
+        </module-->
+
+        <!-- Checks for whitespace                               -->
+        <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <module name="EmptyForIteratorPad"/>
+        <module name="GenericWhitespace"/>
+        <module name="MethodParamPad"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap"/>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
+
+
+        <module name="AvoidStarImport"/>
+        <module name="OneTopLevelClass"/>
+        <module name="NoLineWrap"/>
+        <module name="EmptyBlock">
+            <property name="option" value="TEXT"/>
+            <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
+        </module>
+
+
+        <module name="ImportOrder">
+            <property name="groups" value="/^javax?\./,org"/>
+            <property name="ordered" value="true"/>
+            <!--property name="separated" value="true"/-->
+            <property name="option" value="above"/>
+        </module>
+        <module name="CustomImportOrder">
+            <!--property name="separateLineBetweenGroups" value="true"/-->
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+        </module>
+
+        <module name="AnnotationLocation">
+            <property name="severity" value="error"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+        </module>
+        <module name="ConstantName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="MagicNumber">
+            <property name="ignoreNumbers"
+                    value="-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,32,37,42,64,128,256,512,1024,2048,4096,8192,200,400,404,405,412,500,1000,1000000"/>
+            <property name="ignoreAnnotation" value="true"/>
+            <property name="ignoreHashCodeMethod" value="true"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AbstractClassName">
+            <property name="ignoreModifier" value="true"/>
+            <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$|^Root.*$" />
+        </module>
+        <module name="MemberName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="MethodName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="PackageName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ParameterName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="StaticVariableName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AbbreviationAsWordInName" />
+        <module name="TypeName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AvoidStarImport">
+            <property name="severity" value="error"/>
+            <property name="allowStaticMemberImports" value="true"/>
+        </module>
+        <module name="SingleLineJavadoc">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="IllegalImport">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="RedundantImport">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="UnusedImports">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="SuperClone" />
+        <module name="SuperFinalize">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="MethodLength"/>
+        <module name="ParameterNumber">
+            <property name="max" value="10" />
+            <property name="severity" value="error"/>
+            <property name="tokens" value="METHOD_DEF" />
+        </module>
+        <module name="LineLength">
+            <property name="max" value="152"/>
+            <property name="tabWidth" value="4"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="EmptyForIteratorPad"/>
+        <module name="MethodParamPad">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="NoWhitespaceAfter">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="NoWhitespaceBefore">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="OperatorWrap">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+        <module name="WhitespaceAfter">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ModifierOrder">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="RedundantModifier">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="FallThrough">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="DeclarationOrder">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="CovariantEquals">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ExplicitInitialization">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="LeftCurly">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="NeedBraces">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="EqualsAvoidNull">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="RightCurly"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="IllegalInstantiation"/>
+        <module name="InnerAssignment"/>
+        <module name="MissingSwitchDefault">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="SimplifyBooleanExpression">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="SimplifyBooleanReturn">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="FinalClass">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="HideUtilityClassConstructor">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="InterfaceIsType"/>
+        <!--module name="VisibilityModifier">
+          <property name="severity" value="error"/>
+          <property name="protectedAllowed" value="true"/>
+        </module-->
+        <module name="AtclauseOrder">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="BooleanExpressionComplexity">
+            <property name="severity" value="error"/>
+            <property name="max" value="4"/>
+        </module>
+        <module name="ArrayTypeStyle">
+            <property name="severity" value="error"/>
+        </module>
+        <!--module name="FinalParameters">
+          <property name="severity" value="error"/>
+          <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH"/>
+        </module-->
+        <!--module name="FinalLocalVariable">
+          <property name="severity" value="error"/>
+          <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+        </module-->
+
+       
+        <!--module name="MissingDeprecated">
+          <property name="severity" value="error"/>
+        </module-->
+
+       
+    </module>
+
+
+
+    <!--module name="RegexpSingleline">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
+      <property name="severity" value="error"/>
+      <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>
+      <property name="maximum" value="200"/>
+      <property name="minimum" value="1"/>
+      <property name="fileExtensions" value="java,groovy"/>
+      <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
+    </module-->
+
+
+
+
+
+</module>

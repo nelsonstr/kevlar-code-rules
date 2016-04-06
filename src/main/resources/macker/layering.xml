@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<macker>    
+    <ruleset name="Layering rules">
+        <var name="base" value="org.github.nelsonstr" />
+
+        <pattern name="frontend" class="${base}.frontend.**" />
+		
+        <pattern name="service"  class="${base}.service.**" />
+        <pattern name="model"    class="${base}.model.**" />
+        <pattern name="persist"  class="${base}.persistence.**" />
+        
+        <access-rule>
+            <message>Only the model can talk to the persistence layer</message>
+            <deny>
+                <to pattern="persist" />
+                <allow> <from pattern="persist"/> </allow>
+                <allow> <from pattern="model"/> </allow>
+            </deny>
+        </access-rule>
+        
+        <access-rule>
+            <message>The persistence layer can't access the model</message>
+            <deny>
+                <to   pattern="model" />
+                <from pattern="persist" />
+            </deny>
+        </access-rule>
+        
+        <access-rule>
+            <message>The model and persistence layers can't access the GUI</message>
+            <deny>
+                <to   pattern="frontend" />
+                <from>
+                    <include pattern="model" />
+                    <include pattern="persist" />
+                </from>
+            </deny>
+        </access-rule>
+        
+        <access-rule>
+            <message>Persistence belongs in the persistence layer</message>
+            <deny>
+                <to>
+                    <include class="java.sql.**" />
+                    <include class="javax.sql.**" />
+                    <include class="javax.jdo.**" />
+                </to>
+            </deny>
+            <allow> <from pattern="persist" /> </allow>
+        </access-rule>
+        
+        <!--access-rule>
+            <message>Swing and AWT calls belong in the GUI layer</message>
+            <deny>
+                <to>
+                    <include class="java.awt.**" />
+                    <include class="javax.swing.**" />
+                </to>
+            </deny>
+            <allow> <from pattern="gui" /> </allow>
+        </access-rule-->
+        
+    </ruleset>
+</macker>

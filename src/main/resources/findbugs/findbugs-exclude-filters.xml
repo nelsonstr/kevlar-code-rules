@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- http://findbugs.sourceforge.net/manual/filter.html -->
+<FindBugsFilter xmlns="http://findbugs.sourceforge.net/filter/3.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://findbugs.sourceforge.net/filter/3.0.0 findbugs-filter.xsd">
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="EI_EXPOSE_STATIC_REP2"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="MS_PKGPROTECT"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="MS_FINAL_PKGPROTECT"/>
+    </Match>
+    <Match>
+        <Class name="~.*"/>
+        <Bug pattern="NM_CLASS_NOT_EXCEPTION"/>
+    </Match>
+    <!-- All bugs in test classes, except for JUnit-specific bugs -->
+    <Match>
+        <Class name="~.*\.*Test"/>
+        <Not>
+            <Bug code="IJU"/>
+        </Not>
+    </Match>
+    <!--Match>
+        <Class name="~.*\.*Stories"/>
+        <Not>
+            <Bug code="ISC_INSTANTIATE_STATIC_CLASS"/>
+        </Not>
+    </Match-->
+    <Match>
+        <Class name="~.*\.*Steps"/>
+        <Not>
+            <Bug code="ISC_INSTANTIATE_STATIC_CLASS"/>
+        </Not>
+    </Match>
+
+    <Match>
+        <Source name="~.*\.scala"/>
+    </Match>
+    <Match>
+        <Source name="~.*\.Reverse.*\.scala"/>
+    </Match>
+
+    <Match>
+        <Class name="~.*.Routes.*"/>
+        <Not>
+            <Bug pattern="NM"/>
+            <Bug pattern="NP"/>
+        </Not>
+    </Match>
+    <Match>
+        <Class name="~.*.routes.*"/>
+        <Not>
+            <Bug pattern="NM"/>
+            <Bug pattern="NP"/>
+        </Not>
+    </Match>
+    <Match>
+        <Class name="~.*.views..*"/>
+        <Not>
+            <Bug pattern="NM"/>
+            <Bug pattern="NP"/>
+        </Not>
+    </Match>
+    <!-- Bugs get not rendered in reports correctly.
+    The table header is shown if only EXPERIMENTAL
+    rules have found matches. -->
+    <Match>
+        <Bug category="EXPERIMENTAL"/>
+    </Match>
+</FindBugsFilter>

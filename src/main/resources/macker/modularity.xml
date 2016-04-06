@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<macker>
+    <ruleset name="Modularity rules">
+        <var name="module-base" value="org.github.nelsonstr" />
+
+        <foreach var="module" class="${module-base}.(**).impl.**">
+
+            <pattern name="inside" class="${module-base}.${module}.impl.**" />
+            <pattern name="factory" class="${module-base}.${module}.*Factory" />
+
+            <access-rule>
+                <message>${from} must access the ${module} module through its API</message>
+                <deny> <to pattern="inside" /> </deny>
+                <allow><from pattern="inside" /></allow>
+                <allow><from pattern="factory" /></allow>
+            </access-rule>
+
+        </foreach>
+    </ruleset>
+</macker>
