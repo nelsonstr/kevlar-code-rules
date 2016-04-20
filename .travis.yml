@@ -3,3 +3,6 @@ jdk:
   - oraclejdk8
 script:
   mvn verify
+
+# No need for preliminary install step.
+install: true
