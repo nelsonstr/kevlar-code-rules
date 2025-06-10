@@ -339,11 +339,11 @@
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
   </module>
-  <!--module name="NewlineAtEndOfFile">
+  <module name="NewlineAtEndOfFile">
     <property name="severity" value="error"/>
     <property name="lineSeparator" value="system"/>
     <property name="fileExtensions" value="java, xml, txt, properties"/>
-  </module-->
+  </module>
   <module name="Translation">
     <property name="severity" value="error"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
