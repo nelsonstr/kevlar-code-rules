@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- 
+        This file contains suppressions for false positives and known issues
+        in the OWASP Dependency Check analysis.
+        
+        Format: https://jeremylong.github.io/DependencyCheck/general/suppression.html
+    -->
+    
+    <!-- Suppression for plexus-archiver CVE-2023-37460 -->
+    <!-- This is a transitive dependency from maven-plugin-testing-harness -->
+    <!-- TODO: Investigate if upgrading to maven-plugin-testing-harness 4.0.0-beta-4 resolves this -->
+    <suppress>
+        <notes>Temporary suppression for plexus-archiver CVE-2023-37460 - investigating upgrade path</notes>
+        <gav>org.codehaus.plexus:plexus-archiver:2.2</gav>
+        <cve>CVE-2023-37460</cve>
+    </suppress>
+    
+    <!-- Suppression for plexus-archiver CVE-2018-1002200 -->
+    <suppress>
+        <notes>Temporary suppression for plexus-archiver CVE-2018-1002200 - investigating upgrade path</notes>
+        <gav>org.codehaus.plexus:plexus-archiver:2.2</gav>
+        <cve>CVE-2018-1002200</cve>
+    </suppress>
+    
+    <!-- Suppression for plexus-archiver CVE-2012-2098 -->
+    <suppress>
+        <notes>Temporary suppression for plexus-archiver CVE-2012-2098 - investigating upgrade path</notes>
+        <gav>org.codehaus.plexus:plexus-archiver:2.2</gav>
+        <cve>CVE-2012-2098</cve>
+    </suppress>
+    
+    <!-- Suppression for commons-io CVE-2021-29425 -->
+    <!-- This is a transitive dependency from maven-plugin-testing-harness -->
+    <suppress>
+        <notes>Temporary suppression for commons-io CVE-2021-29425 - investigating upgrade path</notes>
+        <gav>commons-io:commons-io:2.2</gav>
+        <cve>CVE-2021-29425</cve>
+    </suppress>
+    
+    <!-- Suppression for commons-io CVE-2024-47554 -->
+    <suppress>
+        <notes>Temporary suppression for commons-io CVE-2024-47554 - investigating upgrade path</notes>
+        <gav>commons-io:commons-io:2.2</gav>
+        <cve>CVE-2024-47554</cve>
+    </suppress>
+    
+</suppressions> 
