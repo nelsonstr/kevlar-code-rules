@@ -39,19 +39,17 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       
-      - name: Setup Maven
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java }}
-          cache: 'maven'
-      
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            target/
+          key: ${{ runner.os }}-maven-${{ matrix.java }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ matrix.java }}-
+            ${{ runner.os }}-maven-
       
       - name: Cache Maven wrapper
         uses: actions/cache@v4
@@ -120,9 +118,14 @@ jobs:
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            target/
+          key: ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
+            ${{ runner.os }}-maven-
       
       - name: Run PMD analysis
         run: mvn pmd:check -B
@@ -169,25 +172,37 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           cache: 'maven'
       
-      - name: Run OWASP Dependency Check
-        uses: dependency-check/Dependency-Check_Action@main
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
         with:
-          project: 'kevlar-code-rules'
-          path: '.'
-          format: 'HTML'
-          out: 'reports'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-            --enableExperimental
-            --log reports/dependency-check.log
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            target/
+          key: ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
+            ${{ runner.os }}-maven-
+      
+      - name: Cache OWASP Dependency Check
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/owasp
+          key: ${{ runner.os }}-owasp-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-owasp-
+      
+      - name: Run OWASP Dependency Check
+        run: mvn org.owasp:dependency-check-maven:8.4.3:check -B
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+          JAVA_VERSION: ${{ env.JAVA_VERSION }}
       
       - name: Upload security reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: security-reports
-          path: reports/
+          path: target/dependency-check/
           retention-days: 30
 
   # ========================================================================
@@ -215,9 +230,14 @@ jobs:
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            target/
+          key: ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
+            ${{ runner.os }}-maven-
       
       - name: Generate Maven site
         run: mvn site:site -B
@@ -254,9 +274,14 @@ jobs:
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            target/
+          key: ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
+            ${{ runner.os }}-maven-
       
       - name: Setup GPG
         uses: crazy-max/ghaction-import-gpg@v6
@@ -320,8 +345,17 @@ jobs:
     if: always()
     
     steps:
+      - name: Check Slack webhook
+        id: check-slack
+        run: |
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "slack_enabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "slack_enabled=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Notify on failure
-        if: failure()
+        if: failure() && steps.check-slack.outputs.slack_enabled == 'true'
         uses: 8398a7/action-slack@v3
         with:
           status: failure
@@ -330,7 +364,7 @@ jobs:
           text: '❌ CI failed for ${{ github.repository }}#${{ github.run_number }}'
       
       - name: Notify on success
-        if: success()
+        if: success() && steps.check-slack.outputs.slack_enabled == 'true'
         uses: 8398a7/action-slack@v3
         with:
           status: success

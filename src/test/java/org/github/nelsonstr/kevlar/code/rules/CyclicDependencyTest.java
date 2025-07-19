@@ -359,7 +359,7 @@ class ImplementationB implements InterfaceB {
  * It also demonstrates modern Java 21 features.
  * </p>
  * 
- * <h3>Testing Methods</h3>
+ * <h2>Testing Methods</h2>
  * <p>
  * The following methods are available for testing:
  * </p>
@@ -371,7 +371,7 @@ class ImplementationB implements InterfaceB {
  *   <li><strong>demonstrateModernFeatures():</strong> Shows Java 21 features</li>
  * </ul>
  * 
- * <h3>Usage in Tests</h3>
+ * <h2>Usage in Tests</h2>
  * <p>
  * These methods can be called from test classes to create specific
  * dependency scenarios for testing the enforcer rule.

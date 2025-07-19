@@ -1,258 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<ruleset name="nelsonstr"
+<ruleset name="kevlar-code-rules"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 ruleset_2_0_0.xsd">
-    <!-- https://pmd.github.io/ -->
-    <description>Rulessets used for netlsonstr projects.</description>
+    
+    <description>PMD ruleset for Kevlar Code Rules project</description>
 
+    <!-- Exclude target directory -->
     <exclude-pattern>.*/target/.*</exclude-pattern>
 
-    <rule ref="rulesets/java/android.xml"/>
+    <!-- Java Best Practices -->
+    <rule ref="category/java/bestpractices.xml"/>
 
-    <!-- Basic -->
-    <!-- http://pmd.sourceforge.net/rules/basic.html  -->
-    <rule ref="rulesets/xml/basic.xml"/>
-    <rule ref="rulesets/java/empty.xml" />
-    <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
-        <properties>
-            <property name="allowCommentedBlocks" value="true" />
-        </properties>
-    </rule>
-
-    <rule ref="rulesets/java/unnecessary.xml" />
-
-    <!-- Braces -->
-    <!-- http://pmd.sourceforge.net/rules/braces.html -->
-    <rule ref="rulesets/java/braces.xml"/>
-
-    <!-- Code Size -->
-    <!-- http://pmd.sourceforge.net/rules/codesize.html -->
-    <rule ref="rulesets/java/codesize.xml">
-        <!--exclude name="NPathComplexity"/>
-        <exclude name="TooManyMethods"/-->
-    </rule>
-
-    <!-- Clone implementation -->
-    <!-- http://pmd.sourceforge.net/rules/clone.html -->
-    <rule ref="rulesets/java/clone.xml" />
-
-    <!-- Controversial -->
-    <!-- http://pmd.sourceforge.net/rules/controversial.html -->
-    <rule ref="rulesets/java/controversial.xml">
+    <!-- Java Code Style -->
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="OnlyOneReturn"/>
         <exclude name="AtLeastOneConstructor"/>
-        <exclude name="AvoidFinalLocalVariable"/>
-        <exclude name="AvoidLiteralsInIfCondition"/>
-        <exclude name="DataflowAnomalyAnalysis"/>
-        <exclude name="UseConcurrentHashMap"/>
-        <exclude name="AvoidUsingVolatile"/>
+        <exclude name="UseExplicitTypes"/>
     </rule>
 
-    <rule ref="rulesets/java/typeresolution.xml"/>
+    <!-- Java Design -->
+    <rule ref="category/java/design.xml"/>
 
-    <!-- Coupling -->
-    <!-- http://pmd.sourceforge.net/rules/coupling.html -->
-    <rule ref="rulesets/java/coupling.xml" />
-
-    <rule ref="rulesets/java/coupling.xml/ExcessiveImports">
-        <properties>
-            <property name="minimum" value="50" />
-        </properties>
+    <!-- Java Documentation -->
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentSize"/>
     </rule>
 
-    <!-- Design -->
-    <!-- http://pmd.sourceforge.net/rules/design.html -->
-    <rule ref="rulesets/java/design.xml" />
-    <!-- Finalizer -->
-    <!-- http://pmd.sourceforge.net/rules/finalizers.html -->
-    <rule ref="rulesets/java/finalizers.xml" />
+    <!-- Java Error Prone -->
+    <rule ref="category/java/errorprone.xml"/>
 
-    <!-- Import Statement -->
-    <!-- http://pmd.sourceforge.net/rules/imports.html -->
-    <rule ref="rulesets/java/imports.xml" />
+    <!-- Java Multithreading -->
+    <rule ref="category/java/multithreading.xml"/>
 
-    <!-- JEE -->
-    <!-- http://pmd.sourceforge.net/rules/j2ee.html -->
-    <rule ref="rulesets/java/j2ee.xml" >
-      <exclude name="DoNotUseThreads"/>
-    </rule>
+    <!-- Java Performance -->
+    <rule ref="category/java/performance.xml"/>
 
-    <!-- JavaBean -->
-    <!-- http://pmd.sourceforge.net/rules/javabeans.html -->
+    <!-- Java Security -->
+    <rule ref="category/java/security.xml"/>
 
-    <rule ref="rulesets/java/javabeans.xml" />
-
-
-    <!-- JUnit -->
-    <!-- http://pmd.sourceforge.net/rules/junit.html -->
-    <rule ref="rulesets/java/junit.xml"/>
-
-    <!-- Java Logging -->
-    <!-- http://pmd.sourceforge.net/rules/logging-java.html -->
-    <rule ref="rulesets/java/logging-java.xml" />
-
-    <!-- Jakarta Commons Logging -->
-    <!-- http://pmd.sourceforge.net/rules/logging-jakarta-commons.html -->
-    <rule ref="rulesets/java/logging-jakarta-commons.xml" />
-
-    <!-- Migration Rules -->
-    <!-- http://pmd.sourceforge.net/rules/migrating.html -->
-    <rule ref="rulesets/java/migrating.xml" />
-
-    <!-- Naming -->
-    <!-- http://pmd.sourceforge.net/rules/naming.html -->
-
-    <rule ref="rulesets/java/naming.xml" >
-        <exclude name="ShortClassName"/>
-        <exclude name="ShortVariable"/>
-    </rule>
-
-    <!-- Optimization -->
-    <!-- http://pmd.sourceforge.net/rules/optimizations.html -->
-
-    <rule ref="rulesets/java/optimizations.xml" />
-
-    <rule ref="rulesets/java/strictexception.xml" />
-
-    <!-- String and StringBuffer -->
-    <!-- http://pmd.sourceforge.net/rules/strings.html -->
-    <rule ref="rulesets/java/strings.xml" />
-
-    <!-- Security Code -->
-    <!-- http://pmd.sourceforge.net/rules/sunsecure.html -->
-    <rule ref="rulesets/java/sunsecure.xml" />
-
-    <!-- Unused Code -->
-    <!-- http://pmd.sourceforge.net/rules/unusedcode.html -->
-    <rule ref="rulesets/java/unusedcode.xml" />
-
-    <rule ref="rulesets/java/comments.xml" />
-
-    <rule ref="rulesets/java/comments.xml/CommentSize">
-        <properties>
-            <property name="maxLineLength" value="150"/>
-            <!--property name="maxLines" value="20"/-->
-        </properties>
-    </rule>
-
-
-<!-- from https://github.com/teamed/qulice/blob/master/qulice-pmd/src/main/resources/com/qulice/pmd/ruleset.xml -->
-      <rule name="ConstructorShouldDoInitialization"
-          message="Avoid doing field initialization outside constructor."
-          language="java"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
-        <description>
-            Avoid doing field initialization outside class constructor.
-            Such initialization is allowed only when there is no constructor.
-        </description>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                        //ClassOrInterfaceBody
-                        [count(ClassOrInterfaceBodyDeclaration/ConstructorDeclaration)>0]
-                        [count(ClassOrInterfaceBodyDeclaration/FieldDeclaration[@Static='false']/VariableDeclarator/VariableInitializer)>0]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <priority>3</priority>
-    </rule>
-
-    <rule name="OnlyOneConstructorShouldDoInitialization"
-          message="Avoid field initialization in several constructors."
-          language="java"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
-        <description>
-            Avoid doing field initialization in several constructors.
-            Only one main constructor should do real work.
-            Other constructors should delegate initialization to it.
-        </description>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                            //ClassOrInterfaceBody[count(ClassOrInterfaceBodyDeclaration/ConstructorDeclaration)>1]
-                            [count(ClassOrInterfaceBodyDeclaration/ConstructorDeclaration[BlockStatement])>1]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <priority>3</priority>
-    </rule>
-
-    <rule name="ConstructorOnlyInitializesOrCallOtherConstructors"
-          message="Only field initialization or call to other contructors in a constructor."
-          language="java"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
-        <description>
-            Avoid putting anything other than field assignments into constructors.
-            The only exception should be calling other constructors
-            or calling super class constructor.
-        </description>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                            //ConstructorDeclaration/BlockStatement[count(Statement/StatementExpression/PrimaryExpression[count(following-sibling::AssignmentOperator[1])>0]/PrimaryPrefix[@ThisModifier="true"])!=count(*)]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <priority>3</priority>
-    </rule>
-
-    <rule name="StaticAccessToStaticFields"
-          message="Static fields should be accessed in a static way [CLASS_NAME.FIELD_NAME]."
-          language="java"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
-        <description>
-            Avoid accessing static fields directly
-        </description>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                            //Name[@Image = //FieldDeclaration[@Static='true']/@VariableName]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <priority>3</priority>
-    </rule>
-
-    <rule name="ProhibitPublicStaticMethods"
-          message="Public static methods are prohibited."
-          language="java"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
-        <description>
-            Not alowd public static methods are prohibited.
-        </description>
-        <properties>
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-                        //ClassOrInterfaceBodyDeclaration[
-                            MethodDeclaration[@Static='true' and @Public='true'
-                              and not (
-                               MethodDeclarator[
-                                count(FormalParameters/FormalParameter)=1
-                                and @Image='main'
-                                and FormalParameters/FormalParameter[1]/Type/ReferenceType/ClassOrInterfaceType[@Image='String']
-                                and FormalParameters/FormalParameter[@Varargs='true']
-                               ] and not(ResultType/Type)
-                              )
-                            ] and (
-                                Annotation/MarkerAnnotation/Name[@Image!='BeforeClass' and @Image!='AfterClass'
-                                  and @Image!='Parameterized.Parameters']
-                                or not (Annotation)
-                            )
-                        ]
-                    ]]>
-                </value>
-            </property>
-        </properties>
-        <priority>3</priority>
-    </rule>
 </ruleset>

@@ -12,7 +12,7 @@ import java.util.Objects;
  * modern Java 21 features and proper coding patterns.
  * </p>
  * 
- * <h3>Purpose</h3>
+ * <h2>Purpose</h2>
  * <p>
  * This class is used to test PMD (Programming Mistake Detector) configuration
  * and ensure that good code patterns are not incorrectly flagged as violations.
@@ -27,7 +27,7 @@ import java.util.Objects;
  *   <li>Proper equals/hashCode implementations</li>
  * </ul>
  * 
- * <h3>PMD Compliance</h3>
+ * <h2>PMD Compliance</h2>
  * <p>
  * This class is designed to pass all PMD checks including:
  * </p>
@@ -39,7 +39,7 @@ import java.util.Objects;
  *   <li><strong>Error Prone:</strong> Null safety, proper validation</li>
  * </ul>
  * 
- * <h3>Modern Java 21 Features</h3>
+ * <h2>Modern Java 21 Features</h2>
  * <p>
  * This class demonstrates several modern Java 21 features:
  * </p>
@@ -51,7 +51,7 @@ import java.util.Objects;
  *   <li><strong>String Formatting:</strong> Modern string formatting with String.format()</li>
  * </ul>
  * 
- * <h3>Usage Examples</h3>
+ * <h2>Usage Examples</h2>
  * <p>
  * This class demonstrates how to:
  * </p>

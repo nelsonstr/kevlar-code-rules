@@ -178,7 +178,8 @@ public class BadSpotBugsClass {
     public void badNetworkOperation() {
         // Bad: Network operation without proper exception handling
         try {
-            java.net.URL url = new java.net.URL("http://example.com");
+            java.net.URI uri = java.net.URI.create("http://example.com");
+            java.net.URL url = uri.toURL();
             java.net.URLConnection conn = url.openConnection();
             conn.connect();
         } catch (IOException e) {
@@ -190,8 +191,8 @@ public class BadSpotBugsClass {
         // Bad: Reflection without proper exception handling
         try {
             Class<?> clazz = Class.forName("java.lang.String");
-            Object obj = clazz.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            Object obj = clazz.getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | java.lang.reflect.InvocationTargetException e) {
             // Bad: Swallowing exception
         }
     }
@@ -217,10 +218,11 @@ public class BadSpotBugsClass {
         }
     }
     
+    @SuppressWarnings("divzero")
     public void badMathOperation() {
         // Bad: Math operation without proper exception handling
         try {
-            int result = 10 / 0; // Bad: Division by zero
+            int result = 10 / 0; // Bad: Division by zero (intentional for testing)
             System.out.println("Result: " + result);
         } catch (ArithmeticException e) {
             // Bad: Swallowing exception

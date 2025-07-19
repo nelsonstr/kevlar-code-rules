@@ -14,7 +14,7 @@ import java.util.Optional;
  * proper resource management, thread safety, and modern Java 21 features.
  * </p>
  * 
- * <h3>Purpose</h3>
+ * <h2>Purpose</h2>
  * <p>
  * This class is used to test SpotBugs configuration and ensure that good code
  * patterns are not incorrectly flagged as violations. It serves as a reference
@@ -29,7 +29,7 @@ import java.util.Optional;
  *   <li>Proper equals/hashCode implementations</li>
  * </ul>
  * 
- * <h3>SpotBugs Compliance</h3>
+ * <h2>SpotBugs Compliance</h2>
  * <p>
  * This class is designed to pass all SpotBugs checks including:
  * </p>
@@ -41,7 +41,7 @@ import java.util.Optional;
  *   <li><strong>Multithreaded Correctness:</strong> Thread-safe operations</li>
  * </ul>
  * 
- * <h3>Modern Java 21 Features</h3>
+ * <h2>Modern Java 21 Features</h2>
  * <p>
  * This class demonstrates several modern Java 21 features:
  * </p>
@@ -54,7 +54,7 @@ import java.util.Optional;
  *   <li><strong>Closeable Interface:</strong> Proper resource management</li>
  * </ul>
  * 
- * <h3>Resource Management</h3>
+ * <h2>Resource Management</h2>
  * <p>
  * This class demonstrates proper resource management patterns:
  * </p>
@@ -65,7 +65,7 @@ import java.util.Optional;
  *   <li><strong>Thread Safety:</strong> Safe concurrent access to shared resources</li>
  * </ul>
  * 
- * <h3>Usage Examples</h3>
+ * <h2>Usage Examples</h2>
  * <p>
  * This class demonstrates how to:
  * </p>
