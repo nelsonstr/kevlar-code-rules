@@ -1,202 +1,228 @@
-package org.github.nelsonstr.maven.enforcer.rule;
+package org.github.nelsonstr.kevlar.code.rules;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import jdepend.framework.JDepend;
-import jdepend.framework.JavaPackage;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
- * Checks package cycles within the target folder classes folder.
- * <p>
- * This code is based on code by Daniel Seidewitz shown on
- * <a href="http://stackoverflow.com/questions/3416547/maven-jdepend-fail-build-with-cycles">stackoverflow</a>
- *
- * </p>
+ * Maven Enforcer Rule to detect cyclic package dependencies.
+ * 
+ * <p>This rule scans Java source files for import statements and detects
+ * circular dependencies between packages using depth-first search.</p>
+ * 
+ * @author Nelson Str
+ * @version 1.0.0
  */
-
-/*
- * @startuml
- * Developer -> Jenkins : compile
- * Jenkins --> Ansible : Install
- * @enduml
- */
-
 public class NoCyclicPackageDependencyRule implements EnforcerRule {
 
-	private boolean shouldIfail = false;
-	private String ignoredArtifactId = "";
+    private String projectName = "Unknown Project";
+    private int maxDepth = 10;
+    private List<String> excludePatterns = new ArrayList<>();
+    private boolean failOnError = true;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void execute(final EnforcerRuleHelper helper)
-			throws EnforcerRuleException {
-		final Log log = helper.getLog();
+    @Override
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        Log log = helper.getLog();
+        MavenProject project;
+        try {
+            project = (MavenProject) helper.evaluate("${project}");
+        } catch (Exception e) {
+            throw new EnforcerRuleException("Failed to evaluate project", e);
+        }
+        
+        try {
+            log.info("Starting cyclic dependency analysis for: " + projectName);
+            
+            Path srcPath = Paths.get(project.getBasedir().getAbsolutePath(), "src", "main", "java");
+            if (!Files.exists(srcPath)) {
+                log.warn("Source directory not found: " + srcPath);
+                return;
+            }
 
-		try {
-			final MavenProject project = (MavenProject) helper
-					.evaluate("${project}");
-			final String projectName = project.getName();
+            // Scan Java files and extract dependencies
+            Map<String, Set<String>> dependencies = new HashMap<>();
+            try (var paths = Files.walk(srcPath)) {
+                paths.filter(Files::isRegularFile)
+                     .filter(path -> path.toString().endsWith(".java"))
+                     .forEach(file -> extractDependencies(file, dependencies));
+            }
 
-			final File classesDir = new File(
-					(String) helper
-							.evaluate("${project.build.outputDirectory}"));
+            // Detect cycles
+            List<List<String>> cycles = detectCycles(dependencies);
+            
+            if (cycles.isEmpty()) {
+                log.info("✅ No cyclic dependencies found");
+                return;
+            }
 
-			if (classesDir.canRead()) {
-				final JDepend jdepend = new JDepend();
-				jdepend.addDirectory(classesDir.getAbsolutePath());
-				addTestClassesIfRequested(helper, classesDir, jdepend);
+            // Report cycles
+            StringBuilder errorMsg = new StringBuilder("❌ Cyclic dependencies found:\n");
+            for (int i = 0; i < cycles.size(); i++) {
+                errorMsg.append("Cycle ").append(i + 1).append(": ");
+                errorMsg.append(String.join(" → ", cycles.get(i))).append("\n");
+            }
 
-				final Collection<JavaPackage> packages = jdepend.analyze();
+            if (failOnError) {
+                throw new EnforcerRuleException(errorMsg.toString());
+            } else {
+                log.warn(errorMsg.toString());
+            }
 
-				if (jdepend.containsCycles()) {
-					final String buffer = collectCycles(packages);
-					final StringBuilder stringBuffer = new StringBuilder(
-							"Dependency cycle check found package cycles in '");
-					stringBuffer.append(projectName).append("': ")
-							.append(buffer);
-					if (this.shouldIfail
-							&& !ignoredArtifactId.contains(project
-									.getGroupId()
-									+ ':'
-									+ project.getArtifactId())) {
-						throw new EnforcerRuleException(stringBuffer.toString());
-					}
-				} else {
-					log.info("No package cycles found in '" + projectName
-							+ "'.");
-				}
-			} else {
-				log.warn("Skipping package cycle analysis since '" + classesDir
-						+ "' does not exist.");
-			}
-		} catch (final ExpressionEvaluationException e) {
-			throw new EnforcerRuleException(
-					"Dependency cycle check is unable to evaluate expression '"
-							+ e.getLocalizedMessage() + "'.", e);
-		} catch (final IOException e) {
-			throw new EnforcerRuleException(
-					"Dependency cycle check is unable to access a classes directory '"
-							+ e.getLocalizedMessage() + "'.", e);
-		}
-	}
+        } catch (Exception e) {
+            log.error("Analysis failed: " + e.getMessage(), e);
+            throw new EnforcerRuleException("Failed to analyze dependencies", e);
+        }
+    }
 
-	private static void addTestClassesIfRequested(
-			final EnforcerRuleHelper helper, final File classesDir,
-			final JDepend jdepend) throws ExpressionEvaluationException,
-			IOException {
-		final File testClassesDir = new File(
-				(String) helper
-						.evaluate("${project.build.testOutputDirectory}"));
-		if (testClassesDir.canRead()) {
-			jdepend.addDirectory(classesDir.getAbsolutePath());
-		}
-	}
+    private void extractDependencies(Path file, Map<String, Set<String>> dependencies) {
+        try {
+            String packageName = extractPackageName(file);
+            if (packageName == null || shouldExclude(packageName)) {
+                return;
+            }
 
-	private static String collectCycles(final Collection<JavaPackage> packages) {
-		final StringBuilder buffer = new StringBuilder(512);
-		StringBuilder tab = new StringBuilder("\n\t");
-		for (final JavaPackage aPackage : packages) {
-			final List<JavaPackage> dependencies = new ArrayList<>();
-			aPackage.collectCycle(dependencies);
-			if (!dependencies.isEmpty()) {
-				for (final JavaPackage dependency : dependencies) {
-					buffer.append(tab).append("->")
-							.append(dependency.getName());
-					tab.append('\t');
-				}
-				buffer.append('\n');
-				tab = new StringBuilder("\n\t");
-			}
-		}
-		return buffer.toString();
-	}
+            Set<String> fileDeps = new HashSet<>();
+            List<String> lines = Files.readAllLines(file);
+            
+            for (String line : lines) {
+                line = line.trim();
+                if (line.startsWith("import ")) {
+                    String importStmt = line.substring(7).replaceAll(";.*", "");
+                    String depPackage = extractPackageFromImport(importStmt);
+                    if (depPackage != null && !shouldExclude(depPackage)) {
+                        fileDeps.add(depPackage);
+                    }
+                }
+            }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * Always returns the empty string.
-	 * </p>
-	 * <p/>
-	 * 
-	 * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-	 */
-	@Override
-	public String getCacheId() {
-		return "";
-	}
+            if (!fileDeps.isEmpty()) {
+                dependencies.computeIfAbsent(packageName, k -> new HashSet<>()).addAll(fileDeps);
+            }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * Always returns <code>false</code>.
-	 * </p>
-	 * <p/>
-	 * 
-	 * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-	 */
-	@Override
-	public boolean isCacheable() {
-		return false;
-	}
+        } catch (IOException e) {
+            // Skip file on error
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * Always returns <code>false</code>.
-	 * </p>
-	 * <p/>
-	 * 
-	 * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-	 */
-	@Override
-	public boolean isResultValid(final EnforcerRule rule) {
-		return false;
-	}
+    private String extractPackageName(Path file) {
+        String relativePath = file.toString()
+            .replaceAll(".*src/main/java/", "")
+            .replaceAll("\\.java$", "");
+        
+        int lastSlash = relativePath.lastIndexOf('/');
+        return lastSlash == -1 ? null : relativePath.substring(0, lastSlash).replace('/', '.');
+    }
 
-	// --- object basics
-	// --------------------------------------------------------
+    private String extractPackageFromImport(String importStmt) {
+        if (importStmt.startsWith("static ") || importStmt.endsWith(".*")) {
+            return null;
+        }
+        int lastDot = importStmt.lastIndexOf('.');
+        return lastDot == -1 ? null : importStmt.substring(0, lastDot);
+    }
 
-	/**
-	 * Simple param. This rule will fail if the value is true.
-	 * <p/>
-	 * 
-	 * @return the shouldIfail
-	 */
-	public boolean isShouldIfail() {
-		return shouldIfail;
-	}
+    private boolean shouldExclude(String packageName) {
+        return excludePatterns.stream()
+            .anyMatch(pattern -> Pattern.compile(pattern).matcher(packageName).matches());
+    }
 
-	/**
-	 * Simple param. This rule will fail if the value is true.
-	 * <p/>
-	 * 
-	 * @param shouldIfail
-	 *            the shouldIfail to set
-	 */
-	public void setShouldIfail(boolean shouldIfail) {
-		this.shouldIfail = shouldIfail;
-	}
+    private List<List<String>> detectCycles(Map<String, Set<String>> dependencies) {
+        List<List<String>> cycles = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        Set<String> recursionStack = new HashSet<>();
 
-	public String getIgnoredArtifactId() {
-		return ignoredArtifactId;
-	}
+        for (String packageName : dependencies.keySet()) {
+            if (!visited.contains(packageName)) {
+                List<String> currentPath = new ArrayList<>();
+                detectCyclesDFS(packageName, dependencies, visited, recursionStack, currentPath, cycles);
+            }
+        }
 
-	public void setIgnoredArtifactId(String ignoredArtifactId) {
-		this.ignoredArtifactId = ignoredArtifactId;
-	}
+        return cycles;
+    }
+
+    private void detectCyclesDFS(String currentPackage, Map<String, Set<String>> dependencies,
+                                Set<String> visited, Set<String> recursionStack,
+                                List<String> currentPath, List<List<String>> cycles) {
+        
+        if (recursionStack.contains(currentPackage)) {
+            int cycleStart = currentPath.indexOf(currentPackage);
+            List<String> cycle = new ArrayList<>(currentPath.subList(cycleStart, currentPath.size()));
+            cycle.add(currentPackage);
+            cycles.add(cycle);
+            return;
+        }
+
+        if (visited.contains(currentPackage) || currentPath.size() >= maxDepth) {
+            return;
+        }
+
+        visited.add(currentPackage);
+        recursionStack.add(currentPackage);
+        currentPath.add(currentPackage);
+
+        Set<String> packageDeps = dependencies.get(currentPackage);
+        if (packageDeps != null) {
+            for (String dep : packageDeps) {
+                detectCyclesDFS(dep, dependencies, visited, recursionStack, currentPath, cycles);
+            }
+        }
+
+        currentPath.remove(currentPath.size() - 1);
+        recursionStack.remove(currentPackage);
+    }
+
+    @Override
+    public String getCacheId() {
+        return "NoCyclicPackageDependencyRule:" + projectName + ":" + maxDepth + ":" + excludePatterns + ":" + failOnError;
+    }
+
+    @Override
+    public boolean isCacheable() {
+        return true;
+    }
+
+
+    public boolean isResultCacheable() {
+        return false;
+    }
+
+    @Override
+    public boolean isResultValid(EnforcerRule cachedRule) {
+        if (!(cachedRule instanceof NoCyclicPackageDependencyRule)) {
+            return false;
+        }
+        NoCyclicPackageDependencyRule other = (NoCyclicPackageDependencyRule) cachedRule;
+        return Objects.equals(projectName, other.projectName) &&
+               maxDepth == other.maxDepth &&
+               Objects.equals(excludePatterns, other.excludePatterns) &&
+               failOnError == other.failOnError;
+    }
+
+    // Configuration setters
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    public void setExcludePatterns(List<String> excludePatterns) {
+        this.excludePatterns = new ArrayList<>(excludePatterns);
+    }
+
+    public void setFailOnError(boolean failOnError) {
+        this.failOnError = failOnError;
+    }
 }
+

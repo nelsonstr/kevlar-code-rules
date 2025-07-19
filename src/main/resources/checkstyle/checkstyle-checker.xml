@@ -12,10 +12,6 @@
   <property name="severity" value="error"/>
   <property name="charset" value="UTF-8"/>
   <property name="fileExtensions" value="java, properties, xml, scala"/>
-    <module name="SuppressionCommentFilter">
-    <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
-    <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
-    <property name="checkFormat" value="$1"/>
 </module>
 <module name="SuppressWithNearbyCommentFilter">
     <property name="commentFormat" value="CHECKSTYLE:IGNORE"/>
@@ -142,6 +138,11 @@
     <module name="AnnotationLocation">
       <property name="tokens" value="VARIABLE_DEF"/>
       <property name="allowSamelineMultipleAnnotations" value="true"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+      <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+      <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+      <property name="checkFormat" value="$1"/>
     </module>
     <module name="RegexpSinglelineJava">
       <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
@@ -339,11 +340,11 @@
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
   </module>
-  <!--module name="NewlineAtEndOfFile">
+  <module name="NewlineAtEndOfFile">
     <property name="severity" value="error"/>
     <property name="lineSeparator" value="system"/>
     <property name="fileExtensions" value="java, xml, txt, properties"/>
-  </module-->
+  </module>
   <module name="Translation">
     <property name="severity" value="error"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
