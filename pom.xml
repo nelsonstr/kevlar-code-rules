@@ -512,6 +512,21 @@
                     </configuration>
                 </plugin>
 
+                <!-- Maven Release Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <generateReleasePoms>false</generateReleasePoms>
+                        <useReleaseProfile>true</useReleaseProfile>
+                        <goals>deploy</goals>
+                        <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+                    </configuration>
+                </plugin>
+
                 <!-- Maven GPG Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -982,6 +997,10 @@
             <id>release</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>

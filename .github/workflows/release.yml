@@ -172,18 +172,12 @@ jobs:
             
             core.setOutput('changelog', changelog);
       
-      - name: Update version in POM
+      - name: Prepare release parameters
         run: |
-          mvn versions:set -DnewVersion=${{ steps.version.outputs.version }} -DgenerateBackupPoms=false
-          mvn versions:commit
-      
-      - name: Commit version update
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add pom.xml
-          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
-          git push origin main
+          echo "Release version: ${{ steps.version.outputs.version }}"
+          echo "Development version: ${{ steps.version.outputs.next_version }}"
+          echo "release.version=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
+          echo "development.version=${{ steps.version.outputs.next_version }}" >> $GITHUB_ENV
 
   # ========================================================================
   # BUILD RELEASE
@@ -219,16 +213,42 @@ jobs:
             ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
             ${{ runner.os }}-maven-
       
-      - name: Build and test
-        run: mvn clean verify -B
+      - name: Setup GPG
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
       
-      - name: Generate site
-        run: mvn site:site -B
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Execute Maven Release
+        run: |
+          mvn release:prepare release:perform \
+            -DreleaseVersion=${{ env.release.version }} \
+            -DdevelopmentVersion=${{ env.development.version }} \
+            -Darguments="-Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}" \
+            -B
+      
+      - name: Get release version
+        id: release-version
+        run: |
+          VERSION="${{ env.release.version }}"
+          echo "release_version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "release_tag=v${VERSION}" >> $GITHUB_OUTPUT
+          echo "Release version: ${VERSION}"
+      
+      - name: Set job outputs
+        run: |
+          echo "release_version=${{ steps.release-version.outputs.release_version }}" >> $GITHUB_OUTPUT
+          echo "release_tag=${{ steps.release-version.outputs.release_tag }}" >> $GITHUB_OUTPUT
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts-${{ needs.prepare.outputs.version }}
+          name: release-artifacts-${{ steps.release-version.outputs.release_version }}
           path: |
             target/*.jar
             target/*.war
@@ -237,10 +257,10 @@ jobs:
           retention-days: 30
 
   # ========================================================================
-  # CREATE RELEASE
+  # CREATE GITHUB RELEASE
   # ========================================================================
-  create-release:
-    name: Create Release
+  create-github-release:
+    name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: [prepare, build]
     if: ${{ !github.event.inputs.dry_run }}
@@ -255,53 +275,16 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-artifacts-${{ needs.prepare.outputs.version }}
+          name: release-artifacts-${{ needs.build.outputs.release_version }}
           path: artifacts
-      
-      - name: Setup GPG
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: 'maven'
-      
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.m2/wrapper
-            target/
-          key: ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-${{ env.JAVA_VERSION }}-
-            ${{ runner.os }}-maven-
-      
-      - name: Sign and deploy artifacts
-        run: mvn deploy -B -P release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Create Git tag
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a ${{ needs.prepare.outputs.tag }} -m "Release ${{ needs.prepare.outputs.version }}"
-          git push origin ${{ needs.prepare.outputs.tag }}
       
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.prepare.outputs.tag }}
-          release_name: Release ${{ needs.prepare.outputs.version }}
+          tag_name: ${{ needs.build.outputs.release_tag }}
+          release_name: Release ${{ needs.build.outputs.release_version }}
           body: ${{ needs.prepare.outputs.changelog }}
           draft: false
           prerelease: false
@@ -313,7 +296,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/*.jar
-          asset_name: kevlar-code-rules-${{ needs.prepare.outputs.version }}.jar
+          asset_name: kevlar-code-rules-${{ needs.build.outputs.release_version }}.jar
           asset_content_type: application/java-archive
 
   # ========================================================================
@@ -335,7 +318,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-artifacts-${{ needs.prepare.outputs.version }}
+          name: release-artifacts-${{ needs.build.outputs.release_version }}
           path: artifacts
       
       - name: Deploy to GitHub Pages
@@ -353,7 +336,7 @@ jobs:
   notify:
     name: Notifications
     runs-on: ubuntu-latest
-    needs: [prepare, build, create-release, deploy-docs]
+    needs: [prepare, build, create-github-release, deploy-docs]
     if: always() && ${{ !github.event.inputs.dry_run }}
     
     steps:
@@ -373,7 +356,7 @@ jobs:
           status: success
           webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           channel: '#releases'
-          text: '🎉 Release ${{ needs.prepare.outputs.version }} published for ${{ github.repository }}'
+          text: '🎉 Release ${{ needs.build.outputs.release_version }} published for ${{ github.repository }}'
       
       - name: Notify on failure
         if: failure() && steps.check-slack.outputs.slack_enabled == 'true'
@@ -382,4 +365,4 @@ jobs:
           status: failure
           webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
           channel: '#releases'
-          text: '❌ Release ${{ needs.prepare.outputs.version }} failed for ${{ github.repository }}' 
+          text: '❌ Release ${{ needs.build.outputs.release_version }} failed for ${{ github.repository }}' 
