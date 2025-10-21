@@ -278,9 +278,9 @@ class PluginIntegrationTest {
     void testEnforcerRuleConfiguration() {
         // Test that enforcer rules are properly configured
         // This test verifies that the enforcer configuration in pom.xml is valid
-        
+
         // Check if enforcer rule source exists
-        var enforcerRuleSource = new File("src/main/java/NoCyclicPackageDependencyRule.java");
+        var enforcerRuleSource = new File("src/main/java/org/github/nelsonstr/kevlar/code/rules/NoCyclicPackageDependencyRule.java");
         assertTrue(enforcerRuleSource.exists(), "Enforcer rule source file should exist");
         
         // Verify enforcer rule content

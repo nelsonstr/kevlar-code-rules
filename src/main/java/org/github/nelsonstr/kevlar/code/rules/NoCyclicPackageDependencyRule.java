@@ -295,13 +295,6 @@ public class NoCyclicPackageDependencyRule implements EnforcerRule {
         return true;
     }
 
-    /**
-     * Verifica se o resultado pode ser cacheado.
-     */
-    public boolean isResultCacheable() {
-        return false;
-    }
-
     @Override
     public boolean isResultValid(final EnforcerRule cachedRule) {
         if (cachedRule instanceof NoCyclicPackageDependencyRule other) {
