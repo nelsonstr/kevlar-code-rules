@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0           http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- ====================================================================== -->
@@ -10,7 +7,7 @@
     <!-- ====================================================================== -->
     <groupId>org.github.nelsonstr</groupId>
     <artifactId>kevlar-code-rules</artifactId>
-    <version>999-SNAPSHOT</version>
+    <version>2</version>
     <packaging>jar</packaging>
 
     <name>Kevlar Code Rules</name>
@@ -73,7 +70,7 @@
         <connection>scm:git:git://github.com/nelsonstr/kevlar-code-rules.git</connection>
         <developerConnection>scm:git:ssh://github.com:nelsonstr/kevlar-code-rules.git</developerConnection>
         <url>https://github.com/nelsonstr/kevlar-code-rules/tree/main</url>
-        <tag>HEAD</tag>
+        <tag>kevlar-code-rules-2</tag>
     </scm>
 
     <!-- ====================================================================== -->
@@ -131,21 +128,20 @@
     <properties>
         <!-- Java Configuration -->
         <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Maven Plugin Versions -->
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-        <maven-site-plugin.version>4.0.0-M13</maven-site-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-        <maven-enforcer-plugin.version>3.6.0</maven-enforcer-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-site-plugin.version>4.0.0</maven-site-plugin.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
 
         <!-- Testing Framework Versions -->
         <junit-jupiter.version>5.11.2</junit-jupiter.version>
@@ -155,23 +151,28 @@
 
         <!-- Quality Tools Versions -->
         <pmd.version>3.27.0</pmd.version>
+        <maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
-        <spotbugs.version>4.9.3.2</spotbugs.version>
-        <checkstyle.version>10.14.0</checkstyle.version>
-        <jacoco.version>0.8.11</jacoco.version>
-        <jdepend.version>2.9.1</jdepend.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
+        <checkstyle.version>12.1.0</checkstyle.version>
+        <jacoco.version>0.8.14</jacoco.version>
+        <jdepend.version>2.10</jdepend.version>
+        <depend-maven-plugin.version>2.1</depend-maven-plugin.version>
 
         <!-- Documentation Versions -->
-        <asciidoctor-maven-plugin.version>2.2.5</asciidoctor-maven-plugin.version>
-        <asciidoctorj.version>2.5.10</asciidoctorj.version>
+        <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
+        <asciidoctorj.version>3.0.0</asciidoctorj.version>
 
         <!-- Build and Development Tools -->
-        <maven-wrapper.version>3.2.0</maven-wrapper.version>
-        <git-commit-id-plugin.version>8.0.0</git-commit-id-plugin.version>
-        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+        <maven-wrapper.version>3.3.4</maven-wrapper.version>
+        <git-commit-id-plugin.version>8.0.1</git-commit-id-plugin.version>
+        <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
 
         <!-- Maven Enforcer Rules -->
         <maven-enforcer-rules.version>3.6.0</maven-enforcer-rules.version>
+
+        <!-- Maven Release Plugin Version -->
+        <maven-release-plugin.version>3.1.0</maven-release-plugin.version>
     </properties>
 
     <!-- ====================================================================== -->
@@ -193,7 +194,12 @@
             <version>3.9.9</version>
             <scope>provided</scope>
         </dependency>
-
+<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+<dependency>
+    <groupId>org.eclipse.jgit</groupId>
+    <artifactId>org.eclipse.jgit</artifactId>
+    <version>6.10.1.202505221210-r</version>
+</dependency>
         <!-- Maven Plugin API -->
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
@@ -206,7 +212,7 @@
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>jdepend-maven-plugin</artifactId>
-            <version>2.1</version>
+            <version>${depend-maven-plugin.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -343,7 +349,6 @@
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
                         <release>${maven.compiler.release}</release>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <compilerArgs>
@@ -378,7 +383,6 @@
                         <argLine>
                             -Xmx1024m
                             -XX:+UseG1GC
-                            -XX:+UseStringDeduplication
                         </argLine>
                         <!-- Removed Log4j LogManager configuration to avoid ClassNotFoundException -->
                         <parallel>methods</parallel>
@@ -464,7 +468,7 @@
                         <doctitle>${project.name} ${project.version} API</doctitle>
                         <header>${project.name} ${project.version}</header>
                         <bottom>
-                            Copyright &#169; ${project.inceptionYear}&#8211;${maven.build.timestamp.year} ${project.organization.name}. All rights reserved.
+                            Copyright © ${project.inceptionYear}–${maven.build.timestamp.substring(0,4)} ${project.organization.name}. All rights reserved.
                         </bottom>
                         <links>
                             <link>https://docs.oracle.com/en/java/javase/21/docs/api/</link>
@@ -516,10 +520,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${maven-release-plugin.version}</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <tagNameFormat>kevlar-code-rules-@{project.version}</tagNameFormat>
                         <generateReleasePoms>false</generateReleasePoms>
                         <useReleaseProfile>true</useReleaseProfile>
                         <goals>deploy</goals>
@@ -563,7 +567,7 @@
                                 <version>[21,)</version>
                                 <message>Java 21 or higher is required</message>
                             </requireJavaVersion>
-                            <banDuplicatePomDependencyVersions/>
+                            <banDuplicatePomDependencyVersions />
                         </rules>
                         <fail>true</fail>
                     </configuration>
@@ -581,7 +585,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>${pmd.version}</version>
+                    <version>${maven-pmd-plugin.version}</version>
                     <configuration>
                         <linkXRef>false</linkXRef>
                         <minimumTokens>100</minimumTokens>
@@ -873,7 +877,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.1</version>
                 <configuration>
                     <configLocation>src/main/resources/checkstyle/checkstyle-checker.xml</configLocation>
                     <suppressionsLocation>src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
@@ -947,7 +950,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>${pmd.version}</version>
+                <version>${maven-pmd-plugin.version}</version>
             </plugin>
 
             <!-- SpotBugs Plugin -->
@@ -1051,7 +1054,7 @@
                         <artifactId>asciidoctor-maven-plugin</artifactId>
                         <version>${asciidoctor-maven-plugin.version}</version>
                         <configuration>
-                            <sourceDirectory>src/docs/asciidoc</sourceDirectory>
+                            <sourceDirectory>docs/asciidoc</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
                             <backend>html5</backend>
                             <doctype>book</doctype>
@@ -1059,9 +1062,9 @@
                                 <doctitle>${project.name} ${project.version}</doctitle>
                                 <toc>left</toc>
                                 <toclevels>3</toclevels>
-                                <numbered></numbered>
-                                <sectlinks></sectlinks>
-                                <sectanchors></sectanchors>
+                                <numbered />
+                                <sectlinks />
+                                <sectanchors />
                                 <generated>${project.build.directory}/generated-docs</generated>
                             </attributes>
                         </configuration>

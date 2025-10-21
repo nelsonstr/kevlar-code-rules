@@ -7,9 +7,16 @@
 [![Release](https://img.shields.io/github/v/release/nelsonstr/kevlar-code-rules)](https://github.com/nelsonstr/kevlar-code-rules/releases)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/quality_gate?project=nelsonstr_kevlar-code-rules)](https://sonarcloud.io/dashboard?id=nelsonstr_kevlar-code-rules)
 
-> **World-class Maven Enforcer Rule for detecting cyclic package dependencies**
 
-Kevlar Code Rules provides enterprise-grade static analysis and architectural validation for Java projects. Built with modern Java 21 features and designed for high-performance analysis of large-scale codebases.
+
+Kevlar Code Rules provides enterprise-grade static analysis and architectural validation for Java projects. 
+
+It is designed to help you create shared configuration for other  project minimizing the duplicated configuration and keep all projects aligned with a standard rule set.
+
+World-class Maven Enforcer Rule for detecting cyclic package dependencies.
+ 
+Built with modern Java 21 features and designed for high-performance analysis of large-scale codebases.
+
 
 ## 🚀 Features
 
