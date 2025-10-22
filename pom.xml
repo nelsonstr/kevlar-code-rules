@@ -7,7 +7,7 @@
     <!-- ====================================================================== -->
     <groupId>org.github.nelsonstr</groupId>
     <artifactId>kevlar-code-rules</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Kevlar Code Rules</name>
@@ -526,6 +526,7 @@
                         <tagNameFormat>kevlar-code-rules-@{project.version}</tagNameFormat>
                         <generateReleasePoms>false</generateReleasePoms>
                         <useReleaseProfile>true</useReleaseProfile>
+                        <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
                         <goals>deploy</goals>
                         <!-- <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments> -->
                     </configuration>
