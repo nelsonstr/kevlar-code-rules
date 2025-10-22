@@ -68,7 +68,7 @@
     <!-- ====================================================================== -->
     <scm>
         <connection>scm:git:git://github.com/nelsonstr/kevlar-code-rules.git</connection>
-        <developerConnection>scm:git:ssh://github.com:nelsonstr/kevlar-code-rules.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com/nelsonstr/kevlar-code-rules.git</developerConnection>
         <url>https://github.com/nelsonstr/kevlar-code-rules/tree/main</url>
         <tag>kevlar-code-rules-2.0.0</tag>
     </scm>
