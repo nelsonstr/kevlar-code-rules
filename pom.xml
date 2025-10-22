@@ -7,7 +7,7 @@
     <!-- ====================================================================== -->
     <groupId>org.github.nelsonstr</groupId>
     <artifactId>kevlar-code-rules</artifactId>
-    <version>2.0.3</version>
+    <version>2.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Kevlar Code Rules</name>
@@ -70,7 +70,7 @@
         <connection>scm:git:ssh://github.com-nelsonstr/nelsonstr/kevlar-code-rules.git</connection>
         <developerConnection>scm:git:ssh://github.com-nelsonstr/nelsonstr/kevlar-code-rules.git</developerConnection>
         <url>https://github.com/nelsonstr/kevlar-code-rules/tree/main</url>
-        <tag>kevlar-code-rules-2.0.3</tag>
+        <tag>kevlar-code-rules-2.0.2</tag>
     </scm>
 
     <!-- ====================================================================== -->
