@@ -147,7 +147,7 @@
         <junit-jupiter.version>5.11.2</junit-jupiter.version>
         <junit-platform.version>1.11.2</junit-platform.version>
         <mockito.version>5.10.0</mockito.version>
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
 
         <!-- Quality Tools Versions -->
         <pmd.version>3.27.0</pmd.version>
